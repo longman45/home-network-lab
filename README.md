@@ -3,7 +3,7 @@
 
 ## About Me
 
-I'm Adam — an Athletic Trainer making a deliberate career transition into IT and cybersecurity. After over a decade working in some of the most high-pressure, fast-moving healthcare environments imaginable (college sports, clinical orthopedics, and Airforce Specials Operations), I've decided to turn a long-time passion and hobby into a profession.
+I'm Adam — an Athletic Trainer making a deliberate career transition into IT and cybersecurity. After over a decade working in some of the most high-pressure, fast-moving healthcare environments imaginable (college sports, clinical orthopedics, and Air Force Special Operations), I've decided to turn a long-time passion and hobby into a profession.
 
 My background isn't your typical IT origin story. I started as a nursing student, realized I wanted something more dynamic, and pivoted to Athletic Training — a field where nothing is textbook and creative problem solving isn't optional, it's survival. That path took me from graduate school at Auburn University (working with the football team) to running a high-volume orthopedic clinic, coordinating what was the first FDA-observed stem cell cartilage regeneration study in the United States, and eventually doing performance rehabilitation with members of AFSOC.
 
