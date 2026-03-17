@@ -1,128 +1,112 @@
 # Project 01 — Home Network Infrastructure Build
 
-## Objective
+## Overview
 
-Design and build a complete home network from scratch — replacing an ISP-provided gateway with enterprise-grade UniFi equipment, running structured CAT6 cabling throughout the home, and deploying wireless access points and security cameras for full coverage. The goal was a clean, professional-grade foundation that could support advanced segmentation, security, and future expansion.
+This project documents the full design and installation of a new home network from the ground up — replacing an ISP-provided gateway setup with enterprise-grade UniFi hardware, running CAT6 cabling throughout the house, installing network drops, deploying wireless access points, and standing up a surveillance camera system. This infrastructure serves as the physical foundation for all subsequent lab projects.
 
 ---
 
-## Environment
+## Objectives
 
-| Detail | Spec |
+- Replace AT&T BGW320 gateway with a managed UniFi environment
+- Design and install structured CAT6 cabling throughout the home
+- Deploy wired network drops for workstations and media devices
+- Provide full wireless coverage across the main house, MIL suite, garage, and yard
+- Install UniFi security cameras as part of the initial infrastructure build
+- Document the process as a repeatable, professional-grade installation
+
+---
+
+## Hardware Used
+
+| Device | Role |
 |--------|------|
-| Home Layout | Main house + attached mother-in-law suite + garage |
-| Previous Setup | AT&T BGW320 gateway, no structured cabling, no managed switching |
-| New Core Hardware | UniFi Dream Machine Pro (UDM Pro) |
-| Switching | UniFi Switch Pro Max 16 PoE |
-| Wireless | 2x UniFi U7 Lite APs |
-| Cameras | 2x UniFi G6 Turret |
-| Cabling | CAT6, all runs home-run to central location |
-| ISP | AT&T Fiber via BGW320 (IP passthrough mode) |
+| AT&T BGW320 | ISP gateway (configured for IP passthrough) |
+| UniFi Dream Machine Pro (UDM Pro) | Primary router, firewall, and network controller |
+| UniFi Switch Pro Max 16 PoE | Core managed switch |
+| UniFi U7 Lite × 2 | Wireless access points |
+| UniFi G6 Turret × 2 | PoE security cameras |
+| CAT6 cable | Structured wiring throughout home |
 
 ---
 
-## Planning
+## Network Drop Layout
 
-Before pulling a single cable, the entire network was planned using the **UniFi Network Design app**. This allowed visualization of AP placement, coverage overlap, and signal propagation across the floor plan prior to any physical work.
-
-**AP Placement Decisions:**
-
-- **AP 1 (Master Bedroom Closet):** Positioned near the geographic center of the main home. Provides primary coverage for living areas, bedrooms, kitchen, and home office.
-- **AP 2 (Laundry Room / Garage Entry):** Positioned to cover the garage, a portion of the backyard, and — critically — the upstairs mother-in-law suite. The laundry room sits at the junction between the main home and the attached garage, making it the optimal midpoint for extended coverage.
-
-**Drop Locations Planned:**
+6 total wired drops installed across three locations:
 
 | Location | Drops | Purpose |
 |----------|-------|---------|
-| Home Office | 2 | Workstations, wired connectivity |
-| Media Center | 2 | TV, streaming devices |
-| Mother-in-Law Suite | 2 | Wired coverage for attached suite |
+| Home Office | 2 | Primary workstation and lab equipment |
+| Media Center | 2 | TV and streaming devices |
+| MIL Suite | 2 | Workstation and general use |
 
 ---
 
-## The Coax Problem (and the Fix)
+## Wireless Coverage Design
 
-The original plan was to use existing coax cable runs as pull strings — a common technique for routing new cable through finished walls without opening drywall. Feed the new CAT6 alongside or in place of the coax and save significant time.
+AP placement was planned using the **UniFi Design Center** prior to installation to validate coverage before running any cable.
 
-**The problem:** After investigation, the existing coax was stapled directly to studs throughout the walls. It wasn't going anywhere.
+| AP | Location | Coverage Area |
+|----|----------|---------------|
+| U7 Lite #1 | Master bedroom closet | Centrally located — covers the majority of the main house |
+| U7 Lite #2 | Laundry room | Covers MIL suite above, garage, laundry room, and partial yard coverage for outdoor use |
 
-**The solution:** Rather than fishing completely new runs blind through finished walls, the decision was made to remove the existing coax drops entirely. This opened the wall penetrations and provided a usable pathway for the CAT6 runs. Every coax outlet location in the home was converted to a CAT6 network drop — 6 total.
-
-This approach turned a frustrating obstacle into a practical win: locations that previously had coax (typically where people put TVs and desks) are exactly where you want wired network drops anyway.
-
----
-
-## Physical Installation
-
-- All 6 CAT6 runs are **home-run** back to a central termination point — no daisy-chaining or intermediate connections
-- Cables terminated with keystone jacks and installed in wall plates at each drop location
-- All runs punched down to a patch panel at the equipment location
-- Patch panel connects to the UniFi Switch Pro Max 16 PoE
-- APs and cameras are **PoE-powered** directly from the switch — no separate power adapters required
-- Camera placement covers primary entry points; expansion planned for additional coverage zones
+Both APs are wired via PoE back to the UniFi Switch Pro Max 16 PoE, eliminating any wireless backhaul dependency.
 
 ---
 
-## ISP Integration — AT&T BGW320 Passthrough
+## Planning Phase
 
-AT&T fiber requires the BGW320 gateway to remain in line for authentication purposes. To eliminate double-NAT and allow the UDM Pro to function as the true network edge, the BGW320 was configured in **IP passthrough mode**, forwarding the public IP directly to the UDM Pro.
+Before touching a single wall, the network layout was designed using the **UniFi Design Center** — a planning tool that allows you to import a floor plan, place devices, and visualize expected signal coverage. This step drove both AP placement decisions and confirmed that two APs would be sufficient to cover the full footprint including the detached MIL suite and garage.
 
-**Current state:** BGW320 in passthrough, UDM Pro handling all routing, firewall, and network management.
-
-**Future state:** Transition to **XGS-PON** direct connection, removing the BGW320 entirely and connecting fiber directly to the UDM Pro. This eliminates the ISP gateway from the network path completely.
+Cable routing was mapped room by room with the goal of running all drops back to a central termination point where the UDM Pro and switch are located.
 
 ---
 
-## UniFi Adoption & Initial Configuration
+## Installation
 
-With physical infrastructure in place, all devices were adopted into the UniFi Network application running on the UDM Pro:
+### CAT6 Cabling
 
-- Switch Pro Max 16 PoE adopted and port profiles configured
-- Both U7 Lite APs adopted, radio settings tuned, and SSIDs assigned
-- Both G6 Turret cameras adopted into UniFi Protect
-- Default network established; VLAN segmentation built on top in a subsequent project (see Project 02)
+All drops were run using CAT6 cable and terminated with keystone jacks into wall plates. Cable runs were routed through walls and attic space back to the central equipment location.
+
+**Total runs:** 6 network drops + 2 AP drops + 2 camera drops = 10 CAT6 runs
+
+### Obstacle — Coax to CAT6 Conversion
+
+The original plan was to use existing coax cable conduit paths to fish CAT6 through the walls. After opening the walls it became clear the coax was **stapled directly to the studs** and could not be used as a pull guide.
+
+**Solution:** Rather than abandoning those wall paths, the existing coax drops were removed entirely and the same wall openings were reused to install CAT6 drops in their place. This turned a potential setback into a clean result — the coax infrastructure that was no longer needed was replaced with usable network infrastructure using the same wall penetrations.
+
+---
+
+## ISP Gateway Configuration
+
+The AT&T BGW320 was configured in **IP Passthrough mode**, assigning the public IP directly to the UDM Pro. This effectively removes the BGW320 from the routing path and eliminates double-NAT, while keeping the ONT connection intact since AT&T fiber requires their gateway for authentication.
+
+**Future plan:** Replace the BGW320 entirely using **XGS-PON** with a third-party ONT, removing the ISP gateway from the equation altogether once that path is available.
+
+---
+
+## Camera Installation
+
+Two UniFi G6 Turret cameras were installed as part of this build, powered via PoE from the switch. Cameras are managed through the UniFi Protect application running on the UDM Pro.
+
+Additional cameras are planned as the surveillance system expands.
 
 ---
 
 ## Validation & Testing
 
-- Confirmed wired connectivity at all 6 drops via link lights and speed tests
-- Verified PoE delivery to both APs and both cameras from the switch
-- Walked the property to validate wireless coverage — no dead zones identified
-- Confirmed BGW320 passthrough was functioning (single NAT, public IP on UDM Pro WAN interface)
-- Verified camera feeds live in UniFi Protect
+- All 6 network drops tested for connectivity and link speed post-termination
+- Both U7 Lite APs adopted into UniFi controller and verified for expected coverage
+- Both G6 Turret cameras adopted into UniFi Protect and confirmed live feed
+- IP Passthrough confirmed — UDM Pro receiving public IP with no double-NAT
+- Full device inventory visible in UniFi controller with no orphaned or unadopted devices
 
 ---
 
-## Obstacles & Lessons Learned
+## Lessons Learned
 
-**Coax stapled to studs:** The planned pull-string approach failed immediately. Removing the coax drops and using those penetrations as cable pathways was the right call — faster than fishing blind and resulted in cleaner runs.
-
-**AP placement validation matters:** The UniFi design app predicted good coverage from the laundry room AP for the MIL suite. Real-world testing confirmed it. Pre-planning with a design tool before cutting holes saved time and guesswork.
-
-**Home-run everything:** Running all cables back to a single patch location adds more cable but pays off immediately in manageability and troubleshooting. Every drop is independently accessible at the patch panel without touching anything else.
-
----
-
-## Tools & Materials Used
-
-- UniFi Network Design App (planning)
-- CAT6 bulk cable
-- Keystone jacks and wall plates
-- Patch panel
-- Fish tape and glow rods
-- Drill and spade bits for wall penetrations
-- Punch down tool
-- Cable tester
-
----
-
-## Next Steps
-
-With physical infrastructure complete, the next phase focused on logical network design — implementing VLANs, firewall rules, and network segmentation to enforce security boundaries between device types.
-
-→ See [Project 02 — VLAN Segmentation & Network Security Design](./project-02-vlan-segmentation.md)
-
----
-
-*Last updated: March 2026*
+- **Plan before you pull.** Using the UniFi Design Center before installation prevented wasted cable runs and validated AP placement before anything was mounted. The coverage maps matched real-world performance closely.
+- **Survey before you commit to a routing strategy.** The coax pull plan was reasonable on paper — checking the actual cable situation before committing to that approach would have saved some time. That said, the conversion worked cleanly and the end result was better than the original coax anyway.
+- **PoE simplifies everything.** Running a single CAT6 drop to each AP and camera rather than managing separate power runs kept the installation clean and reduced the number of variables during troubleshooting.
